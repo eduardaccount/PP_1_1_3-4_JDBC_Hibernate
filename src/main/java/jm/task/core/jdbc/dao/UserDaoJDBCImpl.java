@@ -13,7 +13,6 @@ public class UserDaoJDBCImpl implements UserDao {
 
     private Statement statement;
 
-
     public UserDaoJDBCImpl() {
         try {
             statement = Util.getStatement();
@@ -72,6 +71,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 Byte age = (byte) resultSet.getInt("user_age");
                 results.add(new User(name, lastName, age));
             }
+            resultSet.close();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -81,6 +81,15 @@ public class UserDaoJDBCImpl implements UserDao {
     public void cleanUsersTable() {
         try {
             statement.execute("TRUNCATE TABLE users_table");
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    public void closeConnections() {
+        try {
+            statement.close();
+            Util.closeConnection();
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
