@@ -7,13 +7,26 @@ public class Util {
     private static final String url = "jdbc:mysql://localhost:3306/ppschema";
     private static final String user = "root";
     private static final String password = "12345678";
-    private static Connection connection;
+    private static Connection connection = null;
 
-    public static Statement getStatement() throws SQLException {
-        connection = DriverManager.getConnection(url, user, password);
-        return connection.createStatement();
+    public static Connection getConnection() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url, user, password);
+            return connection;
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
-    public static void closeConnection() throws SQLException {
-        connection.close();
+
+    public static void closeConnection() {
+        try {
+            connection.close();
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
     }
 }
