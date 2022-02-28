@@ -1,9 +1,11 @@
 package jm.task.core.jdbc.model;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
 
 @Table(name = "users_table")
-@Entity(name = "users_table")
+@Entity
 public class User {
 
     @Id

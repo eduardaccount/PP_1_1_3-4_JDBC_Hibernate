@@ -17,6 +17,7 @@ public class Util {
     private static final String password = "12345678";
     private static final String driver = "com.mysql.cj.jdbc.Driver";
     private static final String dialect = "org.hibernate.dialect.MySQL5Dialect";
+    private static final String UPDATE = "update";
 
     private static Connection connection = null;
     private static SessionFactory sessionFactory = null;
