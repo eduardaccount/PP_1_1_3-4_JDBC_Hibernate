@@ -10,15 +10,10 @@ import java.util.Objects;
 
 public class UserDaoJDBCImpl implements UserDao {
 
-    private Connection connection;
+    private final Connection connection;
 
     public UserDaoJDBCImpl() {
-        try {
-            connection = Util.getConnection();
-            Objects.requireNonNull(connection).setAutoCommit(false);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        connection = Util.getConnection();
     }
 
     public void createUsersTable() {
@@ -28,20 +23,32 @@ public class UserDaoJDBCImpl implements UserDao {
                         "user_name VARCHAR(50), " +
                         "user_lastname VARCHAR(50), " +
                         "user_age INT)")) {
+            Objects.requireNonNull(connection).setAutoCommit(false);
             statement.executeUpdate();
             connection.commit();
         } catch (SQLException ex) {
             ex.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
     public void dropUsersTable() {
         try (PreparedStatement statement = connection.prepareStatement(
                 "DROP TABLE IF EXISTS users_table")) {
+            Objects.requireNonNull(connection).setAutoCommit(false);
             statement.executeUpdate();
             connection.commit();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
@@ -49,23 +56,35 @@ public class UserDaoJDBCImpl implements UserDao {
         try (PreparedStatement statement = connection.prepareStatement(
                 "INSERT INTO users_table (user_name, user_lastname, user_age) " +
                         "VALUES (?, ?, ?);")) {
+            Objects.requireNonNull(connection).setAutoCommit(false);
             statement.setString(1, name);
             statement.setString(2, lastName);
             statement.setInt(3, age);
             statement.executeUpdate();
             connection.commit();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
     public void removeUserById(long id) {
         try (PreparedStatement statement = connection.prepareStatement(
                 "DELETE FROM users_table WHERE user_id = " + id)) {
+            Objects.requireNonNull(connection).setAutoCommit(false);
             statement.executeUpdate();
             connection.commit();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
@@ -74,6 +93,7 @@ public class UserDaoJDBCImpl implements UserDao {
         ResultSet resultSet;
         try (PreparedStatement statement = connection.prepareStatement(
                 "SELECT * FROM users_table")) {
+            Objects.requireNonNull(connection).setAutoCommit(false);
             resultSet = statement.executeQuery();
             connection.commit();
             while (resultSet.next()) {
@@ -83,8 +103,13 @@ public class UserDaoJDBCImpl implements UserDao {
                 results.add(new User(name, lastName, age));
             }
             resultSet.close();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
         }
         return results;
     }
@@ -92,10 +117,16 @@ public class UserDaoJDBCImpl implements UserDao {
     public void cleanUsersTable() {
         try (PreparedStatement statement = connection.prepareStatement(
                 "TRUNCATE TABLE users_table")) {
+            Objects.requireNonNull(connection).setAutoCommit(false);
             statement.executeUpdate();
             connection.commit();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
